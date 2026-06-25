@@ -61,8 +61,8 @@
         }
         .fixed-image {
             width: 200px;
-            height: 200px; /* Додано фіксовану висоту */
-            object-fit: contain; /* Змінено для збереження пропорцій і розміщення */
+            height: 200px;
+            object-fit: contain;
         }
         @media (min-width: 640px) {
             .container.detail-view {
@@ -99,25 +99,25 @@
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <!-- Головний контейнер додатку -->
     <div id="appContainer" class="container">
         
-        <!-- Цей блок буде прихований або видимий в залежності від того, що відображається -->
-        <div id="mainView">
-            <h1 class="text-3xl font-bold mb-6">Список хімічних речовин для дільниці тамподруку</h1>
-            <div id="substanceList" class="space-y-4">
-                <!-- Список речовин буде згенеровано тут за допомогою JavaScript -->
+        <div id="mainView" class="w-full">
+            <h1 class="text-2xl font-bold mb-4 text-center sm:text-left">Список хімічних речовин для дільниці тамподруку</h1>
+            
+            <div class="mb-6">
+                <input type="text" id="searchInput" placeholder="Пошук речовини..." class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
+
+            <div id="substanceList" class="space-y-4">
+                </div>
         </div>
 
-        <!-- Цей блок буде прихований або видимий в залежності від того, що відображається -->
-        <div id="detailView" class="hidden">
-            <button onclick="showMainView()" class="absolute top-4 left-4 text-black text-2xl font-bold transition-all duration-300 transform hover:scale-105">
-    &larr;
-</button>
-            <div id="detailContent" class="w-full flex flex-col sm:flex-row gap-8">
-                <!-- Детальна інформація буде згенерована тут -->
-            </div>
+        <div id="detailView" class="hidden relative w-full">
+            <button onclick="showMainView()" class="absolute top-0 left-0 text-black text-2xl font-bold transition-all duration-300 transform hover:scale-105 z-10">
+                &larr;
+            </button>
+            <div id="detailContent" class="w-full flex flex-col sm:flex-row gap-8 pt-10 sm:pt-0">
+                </div>
         </div>
     </div>
 
@@ -176,9 +176,9 @@
                     <h3 class="font-bold text-lg mb-2">Дії при аварії</h3>
                     <ul class="list-disc pl-5 text-gray-700">
                         <li><b>Потрапляння в очі:</b> Промити великою кількістю води протягом 15 хв</li>
-                        <li><b>Отруєння при вдихання:</b> Виведіть потерпілого на свіже повітря та забезпечте йому спокій у зручному для дихання положенні. Зверніться до лікаря</li>
-                        <li>Потрапляння на шкіру: Промити великою кількістю води з милом</li>
-                        <li>Проковтування: У разі проковтування зверніться за медичною допомогою</li>
+                        <li><b>Отруєння при вдиханні:</b> Виведіть потерпілого на свіже повітря та забезпечте йому спокій у зручному для дихання положенні. Зверніться до лікаря</li>
+                        <li><b>Потрапляння на шкіру:</b> Промити великою кількістю води з милом</li>
+                        <li><b>Проковтування:</b> У разі проковтування зверніться за медичною допомогою</li>
                     </ul>
                 `,
                 protection: `
@@ -194,11 +194,11 @@
                     <h3 class="font-bold text-lg mb-2">Застосування на виробництві</h3>
                     <ul class="list-disc pl-5 text-gray-700">
                         <li>За призначенням у плоттерах</li>
-                   </ul>
+                    </ul>
                 `
             },
             'Maintenance Liquid 15': {
-                image: 'https://raw.githubusercontent.com/shylovak-spec/zizUF/refs/heads/main/images/Maintenance%20Liquid%2015.jpeg',// замінити картинку
+                image: 'https://raw.githubusercontent.com/shylovak-spec/zizUF/refs/heads/main/images/Maintenance%20Liquid%2015.jpeg',
                 dangers: `
                     <h3 class="font-bold text-lg mb-2">Небезпеки</h3>
                     <ul class="list-disc pl-5 text-gray-700">
@@ -212,7 +212,7 @@
                         <li><b>Потрапляння в очі:</b> Негайно промивати чистою водою протягом щонайменше 15 хвилин. Якщо подразнення не зникає, звернутися до лікаря</li>
                         <li><b>Отруєння при вдиханні:</b> Вивести потерпілого на свіже повітря. Якщо дихання утруднене, дати кисень. Негайно звернутися за медичною допомогою</li>
                         <li><b>Потрапляння на шкіру:</b> Промити ділянки водою з милом. Випрати забруднений одяг перед повторним використанням</li>
-                        <li>Проковтування: Звернутися за медичною допомогою. Не викликати блювання</li>
+                        <li><b>Проковтування:</b> Звернутися за медичною допомогою. Не викликати блювання</li>
                     </ul>
                 `,
                 protection: `
@@ -229,8 +229,37 @@
                         <li>Обслуговування принтеру</li>
                     </ul>
                 `
-            },
+            }
         };
+
+        // Функція для генерації списку речовин (з підтримкою пошуку)
+        function renderList(searchTerm = '') {
+            const substanceList = document.getElementById('substanceList');
+            substanceList.innerHTML = ''; // Очищуємо старий список
+
+            const normalizedSearch = searchTerm.toLowerCase().trim();
+            let hasResults = false;
+
+            for (const substance in substanceData) {
+                if (substance.toLowerCase().includes(normalizedSearch)) {
+                    hasResults = true;
+                    const listItem = document.createElement('a');
+                    listItem.href = '#';
+                    listItem.classList.add('list-item');
+                    listItem.textContent = substance;
+                    listItem.onclick = (e) => {
+                        e.preventDefault();
+                        showDetailView(substance);
+                    };
+                    substanceList.appendChild(listItem);
+                }
+            }
+
+            // Якщо нічого не знайдено
+            if (!hasResults) {
+                substanceList.innerHTML = `<p class="text-gray-500 text-center py-4">Речовин за вашим запитом не знайдено.</p>`;
+            }
+        }
 
         // Функція для відображення головної сторінки зі списком
         function showMainView() {
@@ -248,14 +277,14 @@
             detailContent.innerHTML = `
                 <div class="info-container w-full sm:w-1/2">
                     <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-center sm:text-left">${substanceName}</h2>
-                    
-                    <div class="image-and-buttons flex flex-col items-center">
-                        <img src="${data.image}" alt="Зображення ${substanceName}" class="rounded-lg mb-4 sm:mb-0 fixed-image">
+                    <div class="image-and-buttons flex flex-col items-center w-full">
+                        <img src="${data.image}" alt="Зображення ${substanceName}" class="rounded-lg mb-4 fixed-image">
                         <div class="buttons-container w-full sm:w-auto">
                             <button onclick='showSubstanceInfo(${JSON.stringify(substanceName)}, "dangers")' class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 mb-2">Небезпеки</button>
                             <button onclick='showSubstanceInfo(${JSON.stringify(substanceName)}, "actions")' class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 mb-2">Дії при аварії</button>
                             <button onclick='showSubstanceInfo(${JSON.stringify(substanceName)}, "protection")' class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 mb-2">Засоби захисту</button>
                             <button onclick='showSubstanceInfo(${JSON.stringify(substanceName)}, "industrialApplication")' class="w-full bg-neutral-400 hover:bg-neutral-500 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105">Застосування на виробництві</button>
+                        </div>
                     </div>
                 </div>
 
@@ -277,20 +306,14 @@
 
         // Функція для ініціалізації додатка
         function initializeApp() {
-            const substanceList = document.getElementById('substanceList');
+            // Початковий рендер списку
+            renderList();
             
-            // Динамічно генеруємо список речовин з об'єкта substanceData
-            for (const substance in substanceData) {
-                const listItem = document.createElement('a');
-                listItem.href = '#';
-                listItem.classList.add('list-item');
-                listItem.textContent = substance;
-                listItem.onclick = (e) => {
-                    e.preventDefault();
-                    showDetailView(substance);
-                };
-                substanceList.appendChild(listItem);
-            }
+            // Навішуємо подію пошуку на інпут
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                renderList(e.target.value);
+            });
         }
 
         // Запуск додатка при завантаженні сторінки
